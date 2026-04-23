@@ -4,7 +4,7 @@
 
   /// The size constraint for a snapshot (similar to `PreviewLayout`).
   public enum SwiftUISnapshotLayout {
-    #if os(iOS) || os(tvOS)
+    #if os(iOS) || os(tvOS) || os(visionOS)
       /// Center the view in a device container described by`config`.
       case device(config: ViewImageConfig)
     #endif
@@ -14,7 +14,7 @@
     case sizeThatFits
   }
 
-  #if os(iOS) || os(tvOS)
+  #if os(iOS) || os(tvOS) || os(visionOS)
     @available(iOS 13.0, tvOS 13.0, *)
     extension Snapshotting where Value: SwiftUI.View, Format == UIImage {
 
@@ -48,7 +48,7 @@
         let config: ViewImageConfig
 
         switch layout {
-        #if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS) || os(visionOS)
           case let .device(config: deviceConfig):
             config = deviceConfig
         #endif

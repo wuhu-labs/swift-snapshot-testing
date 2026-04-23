@@ -1,4 +1,4 @@
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(visionOS)
   import UIKit
 
   extension Diffing where Value == UIImage {
@@ -23,7 +23,11 @@
       if let scale = scale, scale != 0.0 {
         imageScale = scale
       } else {
-        imageScale = UIScreen.main.scale
+        #if os(visionOS)
+          imageScale = 2
+        #else
+          imageScale = UIScreen.main.scale
+        #endif
       }
       let toData: (UIImage) -> Data = { $0.pngData() ?? emptyImage().pngData()! }
       return .diff(
@@ -286,7 +290,7 @@ private func normalizedComponentDiff(_ old: UIImage, _ new: UIImage) -> UIImage?
 }
 #endif
 
-#if os(iOS) || os(tvOS) || os(macOS)
+#if os(iOS) || os(tvOS) || os(visionOS) || os(macOS)
   import Accelerate.vImage
   import CoreImage.CIKernel
   import MetalPerformanceShaders

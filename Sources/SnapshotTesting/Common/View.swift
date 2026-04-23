@@ -1,17 +1,17 @@
-#if os(iOS) || os(macOS) || os(tvOS)
+#if os(iOS) || os(macOS) || os(visionOS) || os(tvOS) || os(visionOS)
   #if os(macOS)
     import Cocoa
   #endif
   import SceneKit
   import SpriteKit
-  #if os(iOS) || os(tvOS)
+  #if os(iOS) || os(tvOS) || os(visionOS)
     import UIKit
   #endif
-  #if os(iOS) || os(macOS)
+  #if os(iOS) || os(macOS) || os(visionOS)
     import WebKit
   #endif
 
-  #if os(iOS) || os(tvOS)
+  #if os(iOS) || os(tvOS) || os(visionOS)
     public struct ViewImageConfig: Sendable {
       public enum Orientation {
         case landscape
@@ -819,7 +819,7 @@
               imageView.frame = view.frame
               #if os(macOS)
                 view.superview?.addSubview(imageView, positioned: .above, relativeTo: view)
-              #elseif os(iOS) || os(tvOS)
+              #elseif os(iOS) || os(tvOS) || os(visionOS)
                 view.superview?.insertSubview(imageView, aboveSubview: view)
               #endif
               callback(imageView)
@@ -850,7 +850,7 @@
           let cgImage = inWindow { skView.texture(from: skView.scene!)!.cgImage() }
           #if os(macOS)
             let image = Image(cgImage: cgImage, size: skView.bounds.size)
-          #elseif os(iOS) || os(tvOS)
+          #elseif os(iOS) || os(tvOS) || os(visionOS)
             let image = Image(cgImage: cgImage)
           #endif
           return Async(value: image)
@@ -858,7 +858,7 @@
           fatalError("Taking SKView snapshots requires macOS 10.11 or greater")
         }
       }
-      #if os(iOS) || os(macOS)
+      #if os(iOS) || os(macOS) || os(visionOS)
         if let wkWebView = self as? WKWebView {
           return Async<Image> { callback in
             let work = {
@@ -903,7 +903,7 @@
       #endif
       return nil
     }
-    #if os(iOS) || os(tvOS)
+    #if os(iOS) || os(tvOS) || os(visionOS)
       func asImage() -> Image {
         let renderer = UIGraphicsImageRenderer(bounds: bounds)
         return renderer.image { rendererContext in
@@ -913,7 +913,7 @@
     #endif
   }
 
-  #if os(iOS) || os(tvOS)
+  #if os(iOS) || os(tvOS) || os(visionOS)
     extension UIApplication {
       static var sharedIfAvailable: UIApplication? {
         let sharedSelector = NSSelectorFromString("sharedApplication")
@@ -1079,7 +1079,9 @@
       if #available(iOS 13.0, *) {
         window = UIApplication.sharedIfAvailable?.windows.first { $0.isKeyWindow }
       } else {
-        window = UIApplication.sharedIfAvailable?.keyWindow
+        #if !os(visionOS)
+          window = UIApplication.sharedIfAvailable?.keyWindow
+        #endif
       }
       return window
     }
